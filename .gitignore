@@ -1,0 +1,18 @@
+# Local build and distribution outputs (do not ignore liteview/build sources).
+/build/
+/dist/
+/cmake-build-*/
+/dist.7z
+/build-*.log
+
+# Machine-specific IDE and Python caches.
+.idea/
+.vs/
+.vscode/
+__pycache__/
+*.py[cod]
+CMakeUserPresets.json
+*.user
+
+# Bundled Linux SDKs are not used by the Windows CMake port.
+/liteview/sdk_base/

@@ -1,0 +1,2066 @@
+[
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
+                "className": "WebEngineProfile",
+                "lineNumber": 7,
+                "methods": [
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "lineNumber": 29,
+                        "name": "clearHttpCache",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 10,
+                        "name": "storageName",
+                        "notify": "storageNameChanged",
+                        "override": false,
+                        "read": "storageName",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setStorageName"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 11,
+                        "name": "offTheRecord",
+                        "notify": "offTheRecordChanged",
+                        "override": false,
+                        "read": "offTheRecord",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setOffTheRecord"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 12,
+                        "name": "persistentStoragePath",
+                        "notify": "persistentStoragePathChanged",
+                        "override": false,
+                        "read": "persistentStoragePath",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setPersistentStoragePath"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 13,
+                        "name": "cachePath",
+                        "notify": "cachePathChanged",
+                        "override": false,
+                        "read": "cachePath",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setCachePath"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 14,
+                        "name": "httpUserAgent",
+                        "notify": "httpUserAgentChanged",
+                        "override": false,
+                        "read": "httpUserAgent",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setHttpUserAgent"
+                    }
+                ],
+                "qualifiedClassName": "WebEngineProfile",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 33,
+                        "name": "storageNameChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 34,
+                        "name": "offTheRecordChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 35,
+                        "name": "persistentStoragePathChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 36,
+                        "name": "cachePathChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "lineNumber": 37,
+                        "name": "httpUserAgentChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 38,
+                        "name": "clearHttpCacheCompleted",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "webengineprofile.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "anonymous"
+                    }
+                ],
+                "className": "WebEngineSettings",
+                "lineNumber": 6,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 9,
+                        "name": "localStorageEnabled",
+                        "notify": "localStorageEnabledChanged",
+                        "override": false,
+                        "read": "localStorageEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_localStorageEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 10,
+                        "name": "javascriptEnabled",
+                        "notify": "javascriptEnabledChanged",
+                        "override": false,
+                        "read": "javascriptEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_javascriptEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 11,
+                        "name": "accelerated2dCanvasEnabled",
+                        "notify": "accelerated2dCanvasEnabledChanged",
+                        "override": false,
+                        "read": "accelerated2dCanvasEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_accelerated2dCanvasEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 12,
+                        "name": "allowGeolocationOnInsecureOrigins",
+                        "notify": "allowGeolocationOnInsecureOriginsChanged",
+                        "override": false,
+                        "read": "allowGeolocationOnInsecureOrigins",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_allowGeolocationOnInsecureOrigins"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 13,
+                        "name": "allowRunningInsecureContent",
+                        "notify": "allowRunningInsecureContentChanged",
+                        "override": false,
+                        "read": "allowRunningInsecureContent",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_allowRunningInsecureContent"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 14,
+                        "name": "allowWindowActivationFromJavaScript",
+                        "notify": "allowWindowActivationFromJavaScriptChanged",
+                        "override": false,
+                        "read": "allowWindowActivationFromJavaScript",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_allowWindowActivationFromJavaScript"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "lineNumber": 15,
+                        "name": "autoLoadIconsForPage",
+                        "notify": "autoLoadIconsForPageChanged",
+                        "override": false,
+                        "read": "autoLoadIconsForPage",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_autoLoadIconsForPage"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 7,
+                        "lineNumber": 16,
+                        "name": "autoLoadImages",
+                        "notify": "autoLoadImagesChanged",
+                        "override": false,
+                        "read": "autoLoadImages",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_autoLoadImages"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 8,
+                        "lineNumber": 17,
+                        "name": "dnsPrefetchEnabled",
+                        "notify": "dnsPrefetchEnabledChanged",
+                        "override": false,
+                        "read": "dnsPrefetchEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_dnsPrefetchEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 9,
+                        "lineNumber": 18,
+                        "name": "errorPageEnabled",
+                        "notify": "errorPageEnabledChanged",
+                        "override": false,
+                        "read": "errorPageEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_errorPageEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 10,
+                        "lineNumber": 19,
+                        "name": "focusOnNavigationEnabled",
+                        "notify": "focusOnNavigationEnabledChanged",
+                        "override": false,
+                        "read": "focusOnNavigationEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_focusOnNavigationEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 11,
+                        "lineNumber": 20,
+                        "name": "hyperlinkAuditingEnabled",
+                        "notify": "hyperlinkAuditingEnabledChanged",
+                        "override": false,
+                        "read": "hyperlinkAuditingEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_hyperlinkAuditingEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 12,
+                        "lineNumber": 21,
+                        "name": "javascriptCanAccessClipboard",
+                        "notify": "javascriptCanAccessClipboardChanged",
+                        "override": false,
+                        "read": "javascriptCanAccessClipboard",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_javascriptCanAccessClipboard"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 13,
+                        "lineNumber": 22,
+                        "name": "javascriptCanOpenWindows",
+                        "notify": "javascriptCanOpenWindowsChanged",
+                        "override": false,
+                        "read": "javascriptCanOpenWindows",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_javascriptCanOpenWindows"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 14,
+                        "lineNumber": 23,
+                        "name": "javascriptCanPaste",
+                        "notify": "javascriptCanPasteChanged",
+                        "override": false,
+                        "read": "javascriptCanPaste",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_javascriptCanPaste"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 15,
+                        "lineNumber": 24,
+                        "name": "linksIncludedInFocusChain",
+                        "notify": "linksIncludedInFocusChainChanged",
+                        "override": false,
+                        "read": "linksIncludedInFocusChain",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_linksIncludedInFocusChain"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 16,
+                        "lineNumber": 25,
+                        "name": "localContentCanAccessFileUrls",
+                        "notify": "localContentCanAccessFileUrlsChanged",
+                        "override": false,
+                        "read": "localContentCanAccessFileUrls",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_localContentCanAccessFileUrls"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 17,
+                        "lineNumber": 26,
+                        "name": "localContentCanAccessRemoteUrls",
+                        "notify": "localContentCanAccessRemoteUrlsChanged",
+                        "override": false,
+                        "read": "localContentCanAccessRemoteUrls",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_localContentCanAccessRemoteUrls"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 18,
+                        "lineNumber": 27,
+                        "name": "pdfViewerEnabled",
+                        "notify": "pdfViewerEnabledChanged",
+                        "override": false,
+                        "read": "pdfViewerEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_pdfViewerEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 19,
+                        "lineNumber": 28,
+                        "name": "playbackRequiresUserGesture",
+                        "notify": "playbackRequiresUserGestureChanged",
+                        "override": false,
+                        "read": "playbackRequiresUserGesture",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_playbackRequiresUserGesture"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 20,
+                        "lineNumber": 29,
+                        "name": "pluginsEnabled",
+                        "notify": "pluginsEnabledChanged",
+                        "override": false,
+                        "read": "pluginsEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_pluginsEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 21,
+                        "lineNumber": 30,
+                        "name": "printElementBackgrounds",
+                        "notify": "printElementBackgroundsChanged",
+                        "override": false,
+                        "read": "printElementBackgrounds",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_printElementBackgrounds"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 22,
+                        "lineNumber": 31,
+                        "name": "screenCaptureEnabled",
+                        "notify": "screenCaptureEnabledChanged",
+                        "override": false,
+                        "read": "screenCaptureEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_screenCaptureEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 23,
+                        "lineNumber": 32,
+                        "name": "showScrollBars",
+                        "notify": "showScrollBarsChanged",
+                        "override": false,
+                        "read": "showScrollBars",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_showScrollBars"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 24,
+                        "lineNumber": 33,
+                        "name": "spatialNavigationEnabled",
+                        "notify": "spatialNavigationEnabledChanged",
+                        "override": false,
+                        "read": "spatialNavigationEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_spatialNavigationEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 25,
+                        "lineNumber": 34,
+                        "name": "touchIconsEnabled",
+                        "notify": "touchIconsEnabledChanged",
+                        "override": false,
+                        "read": "touchIconsEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_touchIconsEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 26,
+                        "lineNumber": 35,
+                        "name": "webGLEnabled",
+                        "notify": "webGLEnabledChanged",
+                        "override": false,
+                        "read": "webGLEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_webGLEnabled"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 27,
+                        "lineNumber": 36,
+                        "name": "webRTCPublicInterfacesOnly",
+                        "notify": "webRTCPublicInterfacesOnlyChanged",
+                        "override": false,
+                        "read": "webRTCPublicInterfacesOnly",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false,
+                        "write": "set_webRTCPublicInterfacesOnly"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 28,
+                        "lineNumber": 37,
+                        "name": "defaultTextEncoding",
+                        "notify": "defaultTextEncodingChanged",
+                        "override": false,
+                        "read": "defaultTextEncoding",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setDefaultTextEncoding"
+                    }
+                ],
+                "qualifiedClassName": "WebEngineSettings",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "name",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 244,
+                        "name": "settingChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 245,
+                        "name": "defaultTextEncodingChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 246,
+                        "name": "localStorageEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 247,
+                        "name": "javascriptEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "lineNumber": 248,
+                        "name": "accelerated2dCanvasEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 249,
+                        "name": "allowGeolocationOnInsecureOriginsChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "lineNumber": 250,
+                        "name": "allowRunningInsecureContentChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 7,
+                        "lineNumber": 251,
+                        "name": "allowWindowActivationFromJavaScriptChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 8,
+                        "lineNumber": 252,
+                        "name": "autoLoadIconsForPageChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 9,
+                        "lineNumber": 253,
+                        "name": "autoLoadImagesChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 10,
+                        "lineNumber": 254,
+                        "name": "dnsPrefetchEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 11,
+                        "lineNumber": 255,
+                        "name": "errorPageEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 12,
+                        "lineNumber": 256,
+                        "name": "focusOnNavigationEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 13,
+                        "lineNumber": 257,
+                        "name": "hyperlinkAuditingEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 14,
+                        "lineNumber": 258,
+                        "name": "javascriptCanAccessClipboardChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 15,
+                        "lineNumber": 259,
+                        "name": "javascriptCanOpenWindowsChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 16,
+                        "lineNumber": 260,
+                        "name": "javascriptCanPasteChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 17,
+                        "lineNumber": 261,
+                        "name": "linksIncludedInFocusChainChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 18,
+                        "lineNumber": 262,
+                        "name": "localContentCanAccessFileUrlsChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 19,
+                        "lineNumber": 263,
+                        "name": "localContentCanAccessRemoteUrlsChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 20,
+                        "lineNumber": 264,
+                        "name": "pdfViewerEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 21,
+                        "lineNumber": 265,
+                        "name": "playbackRequiresUserGestureChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 22,
+                        "lineNumber": 266,
+                        "name": "pluginsEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 23,
+                        "lineNumber": 267,
+                        "name": "printElementBackgroundsChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 24,
+                        "lineNumber": 268,
+                        "name": "screenCaptureEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 25,
+                        "lineNumber": 269,
+                        "name": "showScrollBarsChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 26,
+                        "lineNumber": 270,
+                        "name": "spatialNavigationEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 27,
+                        "lineNumber": 271,
+                        "name": "touchIconsEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 28,
+                        "lineNumber": 272,
+                        "name": "webGLEnabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 29,
+                        "lineNumber": 273,
+                        "name": "webRTCPublicInterfacesOnlyChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "webenginesettings.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "anonymous"
+                    }
+                ],
+                "className": "WebEngineNavigationRequest",
+                "lineNumber": 7,
+                "methods": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 20,
+                        "name": "accept",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 21,
+                        "name": "reject",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 10,
+                        "member": "url",
+                        "name": "url",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 11,
+                        "member": "isMainFrame",
+                        "name": "isMainFrame",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 12,
+                        "member": "navigationType",
+                        "name": "navigationType",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 13,
+                        "member": "action",
+                        "name": "action",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    }
+                ],
+                "qualifiedClassName": "WebEngineNavigationRequest",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "anonymous"
+                    }
+                ],
+                "className": "WebEngineContextMenuRequest",
+                "lineNumber": 24,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 27,
+                        "member": "accepted",
+                        "name": "accepted",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 28,
+                        "member": "position",
+                        "name": "position",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QPoint",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 29,
+                        "member": "linkUrl",
+                        "name": "linkUrl",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 30,
+                        "member": "selectedText",
+                        "name": "selectedText",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 31,
+                        "member": "isContentEditable",
+                        "name": "isContentEditable",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    }
+                ],
+                "qualifiedClassName": "WebEngineContextMenuRequest",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "webEngineLoadRequest"
+                    }
+                ],
+                "className": "WebEngineLoadRequest",
+                "gadget": true,
+                "lineNumber": 41,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 44,
+                        "member": "url",
+                        "name": "url",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 45,
+                        "member": "status",
+                        "name": "status",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 46,
+                        "member": "errorString",
+                        "name": "errorString",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 47,
+                        "member": "errorCode",
+                        "name": "errorCode",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 48,
+                        "member": "errorDomain",
+                        "name": "errorDomain",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    }
+                ],
+                "qualifiedClassName": "WebEngineLoadRequest"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "anonymous"
+                    }
+                ],
+                "className": "WebEngineAction",
+                "lineNumber": 58,
+                "methods": [
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 74,
+                        "name": "trigger",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 61,
+                        "name": "enabled",
+                        "notify": "enabledChanged",
+                        "override": false,
+                        "read": "isEnabled",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 62,
+                        "member": "text",
+                        "name": "text",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 63,
+                        "member": "iconName",
+                        "name": "iconName",
+                        "override": false,
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    }
+                ],
+                "qualifiedClassName": "WebEngineAction",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 76,
+                        "name": "enabledChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 77,
+                        "name": "triggered",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "webenginetypes.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
+                "className": "WebEngineView",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 35,
+                        "name": "WebAction",
+                        "values": [
+                            "NoWebAction",
+                            "Back",
+                            "Forward",
+                            "Stop",
+                            "Reload",
+                            "Cut",
+                            "Copy",
+                            "Paste",
+                            "Undo",
+                            "Redo",
+                            "SelectAll",
+                            "ReloadAndBypassCache",
+                            "PasteAndMatchStyle",
+                            "OpenLinkInThisWindow",
+                            "OpenLinkInNewWindow",
+                            "OpenLinkInNewTab",
+                            "CopyLinkToClipboard",
+                            "DownloadLinkToDisk",
+                            "CopyImageToClipboard",
+                            "CopyImageUrlToClipboard",
+                            "DownloadImageToDisk",
+                            "CopyMediaUrlToClipboard",
+                            "ToggleMediaControls",
+                            "ToggleMediaLoop",
+                            "ToggleMediaPlayPause",
+                            "ToggleMediaMute",
+                            "DownloadMediaToDisk",
+                            "InspectElement",
+                            "ExitFullScreen",
+                            "RequestClose",
+                            "Unselect",
+                            "SavePage",
+                            "OpenLinkInNewBackgroundTab",
+                            "ViewSource",
+                            "ToggleBold",
+                            "ToggleItalic",
+                            "ToggleUnderline",
+                            "ToggleStrikethrough",
+                            "AlignLeft",
+                            "AlignCenter",
+                            "AlignRight",
+                            "AlignJustified",
+                            "Indent",
+                            "Outdent",
+                            "InsertOrderedList",
+                            "InsertUnorderedList",
+                            "ChangeTextDirectionLTR",
+                            "ChangeTextDirectionRTL",
+                            "WebActionCount"
+                        ]
+                    },
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 48,
+                        "name": "LoadStatus",
+                        "values": [
+                            "LoadStartedStatus",
+                            "LoadStoppedStatus",
+                            "LoadSucceededStatus",
+                            "LoadFailedStatus"
+                        ]
+                    },
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 50,
+                        "name": "NavigationType",
+                        "values": [
+                            "LinkClickedNavigation",
+                            "TypedNavigation",
+                            "FormSubmittedNavigation",
+                            "BackForwardNavigation",
+                            "ReloadNavigation",
+                            "OtherNavigation",
+                            "RedirectNavigation"
+                        ]
+                    },
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 53,
+                        "name": "NavigationRequestAction",
+                        "values": [
+                            "AcceptRequest",
+                            "IgnoreRequest"
+                        ]
+                    },
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 55,
+                        "name": "JavaScriptConsoleMessageLevel",
+                        "values": [
+                            "InfoMessageLevel",
+                            "WarningMessageLevel",
+                            "ErrorMessageLevel"
+                        ]
+                    }
+                ],
+                "lineNumber": 15,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "html",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "baseUrl",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 18,
+                        "lineNumber": 79,
+                        "name": "loadHtml",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "html",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 19,
+                        "isCloned": true,
+                        "lineNumber": 79,
+                        "name": "loadHtml",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "script",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "callback",
+                                "type": "QJSValue"
+                            }
+                        ],
+                        "index": 20,
+                        "lineNumber": 80,
+                        "name": "runJavaScript",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "script",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 21,
+                        "isCloned": true,
+                        "lineNumber": 80,
+                        "name": "runJavaScript",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 22,
+                        "lineNumber": 81,
+                        "name": "goBack",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 23,
+                        "lineNumber": 82,
+                        "name": "goForward",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 24,
+                        "lineNumber": 83,
+                        "name": "reload",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 25,
+                        "lineNumber": 84,
+                        "name": "reloadAndBypassCache",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 26,
+                        "lineNumber": 85,
+                        "name": "stop",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "action",
+                                "type": "WebEngineView::WebAction"
+                            }
+                        ],
+                        "index": 27,
+                        "lineNumber": 86,
+                        "name": "action",
+                        "returnType": "WebEngineAction*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "action",
+                                "type": "WebEngineView::WebAction"
+                            }
+                        ],
+                        "index": 28,
+                        "lineNumber": 87,
+                        "name": "triggerWebAction",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 29,
+                        "lineNumber": 88,
+                        "name": "showInspector",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "destination",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 30,
+                        "lineNumber": 89,
+                        "name": "saveHtml",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 18,
+                        "name": "url",
+                        "notify": "urlChanged",
+                        "override": false,
+                        "read": "url",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setUrl"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 19,
+                        "name": "title",
+                        "notify": "titleChanged",
+                        "override": false,
+                        "read": "title",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 20,
+                        "name": "loading",
+                        "notify": "loadingStateChanged",
+                        "override": false,
+                        "read": "loading",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 21,
+                        "name": "loadProgress",
+                        "notify": "loadProgressChanged",
+                        "override": false,
+                        "read": "loadProgress",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 22,
+                        "name": "canGoBack",
+                        "notify": "canGoBackChanged",
+                        "override": false,
+                        "read": "canGoBack",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 23,
+                        "name": "canGoForward",
+                        "notify": "canGoForwardChanged",
+                        "override": false,
+                        "read": "canGoForward",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "lineNumber": 24,
+                        "name": "zoomFactor",
+                        "notify": "zoomFactorChanged",
+                        "override": false,
+                        "read": "zoomFactor",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "qreal",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setZoomFactor"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 7,
+                        "lineNumber": 25,
+                        "name": "backgroundColor",
+                        "notify": "backgroundColorChanged",
+                        "override": false,
+                        "read": "backgroundColor",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QColor",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setBackgroundColor"
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 8,
+                        "lineNumber": 26,
+                        "name": "settings",
+                        "override": false,
+                        "read": "settings",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "WebEngineSettings*",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 9,
+                        "lineNumber": 27,
+                        "name": "profile",
+                        "notify": "profileChanged",
+                        "override": false,
+                        "read": "profile",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "WebEngineProfile*",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setProfile"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 10,
+                        "lineNumber": 28,
+                        "name": "webChannel",
+                        "notify": "webChannelChanged",
+                        "override": false,
+                        "read": "webChannel",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QWebChannel*",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setWebChannel"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 11,
+                        "lineNumber": 29,
+                        "name": "devToolsView",
+                        "notify": "devToolsViewChanged",
+                        "override": false,
+                        "read": "devToolsView",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "WebEngineView*",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setDevToolsView"
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 12,
+                        "lineNumber": 30,
+                        "name": "backendName",
+                        "override": false,
+                        "read": "backendName",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 13,
+                        "lineNumber": 31,
+                        "name": "unsupportedFeatures",
+                        "override": false,
+                        "read": "unsupportedFeatures",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QStringList",
+                        "user": false,
+                        "virtual": false
+                    }
+                ],
+                "qualifiedClassName": "WebEngineView",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 101,
+                        "name": "urlChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 102,
+                        "name": "titleChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 103,
+                        "name": "loadingStateChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 104,
+                        "name": "loadProgressChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "lineNumber": 105,
+                        "name": "canGoBackChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 106,
+                        "name": "canGoForwardChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "lineNumber": 107,
+                        "name": "zoomFactorChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 7,
+                        "lineNumber": 108,
+                        "name": "backgroundColorChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 8,
+                        "lineNumber": 109,
+                        "name": "webChannelChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 9,
+                        "lineNumber": 110,
+                        "name": "profileChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 10,
+                        "lineNumber": 111,
+                        "name": "devToolsViewChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "loadRequest",
+                                "type": "WebEngineLoadRequest"
+                            }
+                        ],
+                        "index": 11,
+                        "lineNumber": 112,
+                        "name": "loadingChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "request",
+                                "type": "WebEngineNavigationRequest*"
+                            }
+                        ],
+                        "index": 12,
+                        "lineNumber": 113,
+                        "name": "navigationRequested",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "request",
+                                "type": "WebEngineContextMenuRequest*"
+                            }
+                        ],
+                        "index": 13,
+                        "lineNumber": 114,
+                        "name": "contextMenuRequested",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "level",
+                                "type": "WebEngineView::JavaScriptConsoleMessageLevel"
+                            },
+                            {
+                                "name": "message",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "lineNumber",
+                                "type": "int"
+                            },
+                            {
+                                "name": "sourceID",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 14,
+                        "lineNumber": 115,
+                        "name": "javaScriptConsoleMessage",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 15,
+                        "lineNumber": 117,
+                        "name": "windowCloseRequested",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "feature",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 16,
+                        "lineNumber": 118,
+                        "name": "unsupportedFeatureRequested",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "destination",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "success",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 17,
+                        "lineNumber": 119,
+                        "name": "htmlSaved",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QQuickPaintedItem"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "webengineview.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "WebKitBackend",
+                "lineNumber": 16,
+                "object": true,
+                "qualifiedClassName": "WebKitBackend",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QWebChannelAbstractTransport"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "webkitbackend.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QWebKitPlugin",
+                "lineNumber": 11,
+                "object": true,
+                "qualifiedClassName": "QWebKitPlugin",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QQmlEngineExtensionPlugin"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qwebkit_QWebKitPlugin.cpp",
+        "outputRevision": 69
+    }
+]

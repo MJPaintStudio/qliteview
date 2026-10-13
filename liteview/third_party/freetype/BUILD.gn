@@ -1,0 +1,118 @@
+import("//sdkpath.gni")
+
+static_library("freetype") {
+
+  include_dirs = [
+
+    "$ndkIncludePath",
+    "$sdkPath/include/c++/7.2.0",
+    "$sdkPath/include/c++/7.2.0/include",
+    "$sdkPath/include/c++/7.2.0/x86_64-unknown-linux-gnu/",
+    "$sdkPath2/usr/lib/x86_64-linux-gnu/glib-2.0/include",
+
+    "$sdkPath/sysroot/usr/include",
+    "$sdkPath/sysroot/usr/",
+    "$sdkPath/sysroot/usr/include/linux",
+    "$sdkPath2/usr/include/libdrm",
+
+    "//",
+
+    "$sdkPath2/usr/include/cairo",
+    "$sdkPath2/usr/include/glib-2.0",
+    "$sdkPath2/usr/include/gtk-3.0",
+    "$sdkPath2/usr/include/gdk-pixbuf-2.0",
+    "$sdkPath2/usr/include/atk-1.0",
+    "$sdkPath2/usr/include/pango-1.0",
+
+    "//linux",
+    "src/include", 
+
+    "//gen/v8x64linux",
+    "//gen/v8x64linux/include",
+
+  ]
+
+  cflags = [
+    "-D_GNU_SOURCE",
+    "-DUSE_AURA",
+    "-DOS_LINUX_FOR_WIN",
+    "-DFT_DEBUG_LEVEL_ERROR",
+    "-DFT_DEBUG_LEVEL_TRACE",
+    "-DFT2_BUILD_LIBRARY",
+    "-DCHROMIUM_RESTRICT_VISIBILITY",
+
+
+    "-fPIC", 
+    "-fno-exceptions", 
+    "-fvisibility=hidden", 
+    "--target=x86_64-linux-guneabi", 
+    "-DUSE_EGL", 
+    "-DSK_GL", 
+    "-DSK_SUPPORT_GPU=1", 
+    "-DSK_GRAPHITE_ENABLED", 
+    "-DSK_SUPPORT_LEGACY_SLUG_CONVERT", 
+    "-DSK_B32_SHIFT=16", 
+    "-DSK_G32_SHIFT=8", 
+    "-DSK_R32_SHIFT=0", 
+    "-DSK_A32_SHIFT=24", 
+    "-DOS_LINUX=1", 
+    "-DENABLE_MB_MEDIA=1", 
+    "-DV8_HOST_ARCH_X64", 
+    "-DV8_TARGET_ARCH_X64", 
+    "-D__POINT_SIZE__=8", 
+    "-D__USE_OPENGL__", 
+    "-DV8_ENABLE_MAGLEV", 
+    "-mno-avx", 
+    "-DV8_EXTERNAL_CODE_SPACE",
+    "-DV8_DEPRECATION_WARNINGS", 
+    "-DV8_COMPRESS_POINTERS", 
+    "-DV8_COMPRESS_POINTERS_IN_SHARED_CAGE", 
+    "-DV8_31BIT_SMIS_ON_64BIT_ARCH", 
+    "-DCPPGC_CAGED_HEAP", 
+    "-DCPPGC_YOUNG_GENERATION", 
+    "-DCPPGC_POINTER_COMPRESSION", 
+  ]
+
+  sources = [
+    "src/src/winfonts/winfnt.c",
+    "src/src/autofit/autofit.c",
+    "src/src/bdf/bdf.c",
+    "src/src/cache/ftcache.c",
+    "src/src/cff/cff.c",
+    "src/src/cid/type1cid.c",
+    "src/src/gzip/ftgzip.c",
+    "src/src/lzw/ftlzw.c",
+    "src/src/pfr/pfr.c",
+    "src/src/pcf/pcf.c",
+    "src/src/psaux/psaux.c",
+    "src/src/pshinter/pshinter.c",
+    "src/src/psnames/psmodule.c",
+    "src/src/raster/raster.c",
+    "src/src/sfnt/sfnt.c",
+    "src/src/smooth/smooth.c",
+    "src/src/truetype/truetype.c",
+    "src/src/type1/type1.c",
+    "src/src/type42/type42.c",
+    "src/src/base/ftbase.c",
+    "src/src/base/ftinit.c",
+    "src/src/base/ftsystem.c",
+    "src/src/base/ftdebug.c",
+    "src/src/base/ftbbox.c",
+    "src/src/base/ftbdf.c",
+    "src/src/base/ftbitmap.c",
+    "src/src/base/ftcid.c",
+    "src/src/base/ftfstype.c",
+    "src/src/base/ftgasp.c",
+    "src/src/base/ftglyph.c",
+    "src/src/base/ftgxval.c",
+    "src/src/base/ftmm.c",
+    "src/src/base/ftotval.c",
+    "src/src/base/ftpatent.c",
+    "src/src/base/ftpfr.c",
+    "src/src/base/ftstroke.c",
+    "src/src/base/ftsynth.c",
+    "src/src/base/fttype1.c",
+    "src/src/base/ftobjs.c",
+    "src/src/base/ftwinfnt.c"
+  ]
+}

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>QLiteView 示例</title>
+<style>
+body{font:17px/1.7 system-ui,sans-serif;max-width:820px;margin:55px auto;padding:0 24px;color:#1e293b;background:#f8fafc}
+h1{font-size:38px;line-height:1.2}button,input{font:inherit;padding:8px 14px;margin:4px;border:1px solid #cbd5e1;border-radius:7px}
+button{background:#2563eb;color:white;cursor:pointer}section{background:white;padding:20px;margin:20px 0;border:1px solid #e2e8f0;border-radius:12px}a{color:#2563eb}code{background:#e2e8f0;padding:3px 6px}#output{white-space:pre-wrap}
+</style><script src="qrc:///qtwebchannel/qwebchannel.js"></script></head><body>
+<p>Qt 6.11.1 · LiteView Windows x64</p><h1>QLiteView 浏览器</h1>
+<p>网页由 LiteView 渲染。此版本关闭 WebGL 和音视频，保留 HTML、CSS、JavaScript 与 Qt WebChannel。</p>
+<section><h2>网页 ↔ Qt</h2><input id="message" value="你好，QLiteView"><button id="send" disabled>调用 hsjpro.echo()</button><p id="output">正在连接 WebChannel…</p></section>
+<section><h2>交互验证</h2><p><a href="second.html">打开第二页，测试后退与前进</a></p><p><a href="qwebkit-blocked:test">测试 QML 导航拦截</a></p><input placeholder="输入中文、选中、复制和粘贴"><p>在网页内右击查看 QML 菜单；右上角文字是 QML 覆盖层。</p><button onclick="localStorage.setItem('qwebkit-test',String(Date.now()));document.getElementById('stored').textContent=localStorage.getItem('qwebkit-test')">测试 localStorage</button><span id="stored"></span></section>
+<script>
+new QWebChannel(qt.webChannelTransport, channel => {
+    document.getElementById('send').disabled=false;
+    document.getElementById('output').textContent='WebChannel 已连接';
+    document.getElementById('send').onclick=()=>channel.objects.hsjpro.echo(document.getElementById('message').value, result=>document.getElementById('output').textContent=result);
+});
+console.log('QLiteView example ready',navigator.userAgent);
+</script></body></html>
