@@ -63,6 +63,7 @@ struct LiteViewBackend::Private {
     qreal dpr = 1;
     double appliedZoom = 0;
     QSize size;
+    quint64 navigationGeneration = 0;
     std::deque<std::function<void()>> pending;
     QHash<quintptr, std::function<void(QVariant)>> evaluations;
     quintptr nextEvaluation = 1;
@@ -83,6 +84,15 @@ struct LiteViewBackend::Private {
     void afterReady(std::function<void()> action) {
         if (ready) action();
         else pending.push_back(std::move(action));
+    }
+    void loadAfterReady(std::function<void()> action) {
+        const auto generation = ++navigationGeneration;
+        afterReady([this, generation, action = std::move(action)] {
+            if (generation != navigationGeneration) return;
+            // A direct HTML commit must cancel any earlier URL navigation.
+            mbStopLoading(handle);
+            action();
+        });
     }
     static void __stdcall prepared(int64_t handle, void*) {
         auto self = views().value(handle);
@@ -109,6 +119,7 @@ struct LiteViewBackend::Private {
         request->url = QUrl(QString::fromUtf8(url));
         request->isMainFrame = main != 0;
         switch (type) {
+        case qliteview::redirectNavigation: request->navigationType = WebEngineView::RedirectNavigation; break;
         case MB_NAVIGATION_TYPE_LINKCLICK: request->navigationType = WebEngineView::LinkClickedNavigation; break;
         case MB_NAVIGATION_TYPE_FORMSUBMITTE: case MB_NAVIGATION_TYPE_FORMRESUBMITT:
             request->navigationType = WebEngineView::FormSubmittedNavigation; break;
@@ -257,10 +268,10 @@ LiteViewBackend::~LiteViewBackend()
     // If creation is still pending, prepared() destroys it once safe.
 }
 void LiteViewBackend::load(const QUrl& url) {
-    d->afterReady([this, url] { mbLoadURL(d->handle, url.toEncoded().constData()); });
+    d->loadAfterReady([this, url] { mbLoadURL(d->handle, url.toEncoded().constData()); });
 }
 void LiteViewBackend::loadHtml(const QString& html, const QUrl& base) {
-    d->afterReady([this, html, base] { mbLoadHtmlWithBaseUrl(d->handle, html.toUtf8().constData(), base.toEncoded().constData()); });
+    d->loadAfterReady([this, html, base] { mbLoadHtmlWithBaseUrl(d->handle, html.toUtf8().constData(), base.toEncoded().constData()); });
 }
 void LiteViewBackend::evaluate(const QString& script, std::function<void(QVariant)> callback) {
     d->afterReady([this, script, callback = std::move(callback)]() mutable {

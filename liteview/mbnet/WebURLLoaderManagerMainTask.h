@@ -22,6 +22,7 @@
 #include "third_party/blink/public/platform/web_security_origin.h"
 #include "third_party/blink/renderer/platform/network/http_parsers.h"
 #include "net/http/http_util.h"
+#include "net/base/net_errors.h"
 #include "third_party/blink/renderer/platform/wtf/text/string_utf8_adaptor.h"
 #include "third_party/blink/public/mojom/loader/resource_load_info.mojom-shared.h"
 
@@ -849,9 +850,14 @@ static void doRedirect(WebURLLoaderInternal* job, const std::string& location, M
 
         bool reportRawHeaders = false;
         std::vector<std::string> removedHeaders;
-        client->WillFollowRedirect(newURL, net::SiteForCookies(), newReferrer,
+        if (!client->WillFollowRedirect(newURL, net::SiteForCookies(), newReferrer,
             /*network::mojom::ReferrerPolicy()*/network::mojom::ReferrerPolicy::kAlways, newMethod, job->m_response/*passed_redirect_response*/,
-            reportRawHeaders, &removedHeaders, /*insecure_scheme_was_upgraded*/false);
+            reportRawHeaders, &removedHeaders, /*insecure_scheme_was_upgraded*/false)) {
+            job->resetClient();
+            WebURLLoaderManager::sharedInstance()->cancel(job->m_id);
+            client->DidFail(blink::WebURLError(net::ERR_ABORTED, newURL), base::TimeTicks::Now(), 0, 0, 0);
+            return;
+        }
     }
 
     if (isRedirectByHttpCode)

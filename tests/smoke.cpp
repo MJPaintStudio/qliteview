@@ -265,6 +265,201 @@ void Smoke::htmlWithoutBaseUrl() {
         QTRY_COMPARE_WITH_TIMEOUT(web->property("title").toString(),QStringLiteral("No base URL"),10000);
         QCOMPARE(evaluate("window.scriptLoaded"),QStringLiteral("true"));
     }
+void Smoke::htmlReplacesInitialUrl() {
+    QQmlComponent component(&engine);
+    component.setData(R"QML(
+import QtQuick
+import QWebKit
+WebEngineView {
+    id: view
+    width: 320; height: 200
+    property string result: ""
+    url: "data:text/html,<title>Default light page</title><body style='color:black'>default</body>"
+    function evaluate(code: string) {
+        result = "pending"
+        runJavaScript(code, value => result = JSON.stringify(value))
+    }
+    Component.onCompleted: loadHtml("<title>Themed HTML</title><body style='background:#323232;color:white'>themed</body>")
+})QML", QUrl("qrc:/tests/InitialNavigation.qml"));
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+    std::unique_ptr<QObject> view(component.create());
+    QVERIFY(view);
+    auto item = qobject_cast<QQuickItem*>(view.get());
+    QVERIFY(item);
+    item->setParentItem(window.contentItem());
+    QTRY_COMPARE_WITH_TIMEOUT(view->property("title").toString(), QStringLiteral("Themed HTML"), 10000);
+    QTest::qWait(500);
+    QCOMPARE(view->property("title").toString(), QStringLiteral("Themed HTML"));
+    QVERIFY(QMetaObject::invokeMethod(view.get(), "evaluate",
+        Q_ARG(QString, QStringLiteral("getComputedStyle(document.body).color"))));
+    QTRY_COMPARE_WITH_TIMEOUT(view->property("result").toString(),
+        QStringLiteral("\"rgb(255, 255, 255)\""), 10000);
+}
+void Smoke::htmlReplacesPendingNavigation_data() {
+    QTest::addColumn<QString>("replacement");
+    QTest::addColumn<bool>("lateFailure");
+    QTest::newRow("html") << QStringLiteral("html") << false;
+    QTest::newRow("url") << QStringLiteral("url") << false;
+    QTest::newRow("stop") << QStringLiteral("stop") << false;
+    QTest::newRow("late-failure") << QStringLiteral("html") << true;
+}
+void Smoke::htmlReplacesPendingNavigation() {
+    QFETCH(QString, replacement);
+    QFETCH(bool, lateFailure);
+    const QString html = QStringLiteral("<title>Replacement HTML</title><body style='color:white'>replacement</body>");
+    QVERIFY(QMetaObject::invokeMethod(root, "htmlWithoutBase", Q_ARG(QString, html)));
+    QTRY_COMPARE_WITH_TIMEOUT(web->property("title").toString(), QStringLiteral("Replacement HTML"), 10000);
+    QTRY_COMPARE_WITH_TIMEOUT(evaluate("document.body && getComputedStyle(document.body).color"),
+        QStringLiteral("\"rgb(255, 255, 255)\""), 10000);
+    QTcpServer server;
+    QVERIFY(server.listen(QHostAddress::LocalHost));
+    int requests = 0;
+    connect(&server, &QTcpServer::newConnection, &server, [&] {
+        while (auto socket = server.nextPendingConnection()) {
+            connect(socket, &QTcpSocket::readyRead, socket, [&, socket] {
+                if (socket->property("handled").toBool()) return;
+                socket->setProperty("handled", true);
+                socket->readAll();
+                ++requests;
+                QTimer::singleShot(500, socket, [socket, lateFailure] {
+                    if (lateFailure) {
+                        socket->abort();
+                        return;
+                    }
+                    const QByteArray html("<title>Late URL response</title><body>late default</body>");
+                    socket->write("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\nContent-Length: "
+                        + QByteArray::number(html.size()) + "\r\n\r\n" + html);
+                    socket->disconnectFromHost();
+                });
+            });
+            connect(socket, &QTcpSocket::disconnected, socket, &QObject::deleteLater);
+        }
+    });
+    QVERIFY(web->setProperty("url", QUrl(QStringLiteral("http://127.0.0.1:%1/late").arg(server.serverPort()))));
+    QTRY_VERIFY_WITH_TIMEOUT(requests > 0, 10000);
+    if (replacement == QStringLiteral("stop")) {
+        QVERIFY(QMetaObject::invokeMethod(web, "stop"));
+    } else if (replacement == QStringLiteral("url")) {
+        QVERIFY(web->setProperty("url", QUrl(QStringLiteral("data:text/html,") + QString::fromLatin1(html.toUtf8().toPercentEncoding()))));
+    } else {
+        QVERIFY(QMetaObject::invokeMethod(root, "htmlWithoutBase", Q_ARG(QString, html)));
+    }
+    QTRY_COMPARE_WITH_TIMEOUT(web->property("title").toString(), QStringLiteral("Replacement HTML"), 10000);
+    QTest::qWait(800);
+    QCOMPARE(web->property("title").toString(), QStringLiteral("Replacement HTML"));
+    QCOMPARE(evaluate("getComputedStyle(document.body).color"), QStringLiteral("\"rgb(255, 255, 255)\""));
+}
+void Smoke::oauthNavigation_data() {
+    QTest::addColumn<bool>("subframe");
+    QTest::addColumn<bool>("redirect");
+    QTest::addColumn<bool>("reject");
+    QTest::addColumn<bool>("topNavigation");
+    QTest::newRow("main-script") << false << false << true << false;
+    QTest::newRow("iframe-script") << true << false << true << false;
+    QTest::newRow("main-redirect") << false << true << true << false;
+    QTest::newRow("iframe-redirect") << true << true << true << false;
+    QTest::newRow("main-redirect-accepted") << false << true << false << false;
+    QTest::newRow("iframe-redirect-accepted") << true << true << false << false;
+    QTest::newRow("iframe-top-script-blocked") << true << false << true << true;
+}
+void Smoke::oauthNavigation() {
+    QFETCH(bool, subframe);
+    QFETCH(bool, redirect);
+    QFETCH(bool, reject);
+    QFETCH(bool, topNavigation);
+    QTcpServer server;
+    QVERIFY(server.listen(QHostAddress::LocalHost));
+    const QString base = QStringLiteral("http://127.0.0.1:%1").arg(server.serverPort());
+    const QString callback = base + QStringLiteral("/oauth.html?code=TEST-CODE&state=34");
+    int callbackRequests = 0;
+    connect(&server, &QTcpServer::newConnection, &server, [&] {
+        while (auto socket = server.nextPendingConnection()) {
+            connect(socket, &QTcpSocket::readyRead, socket, [&, socket] {
+                auto request = socket->property("request").toByteArray() + socket->readAll();
+                socket->setProperty("request", request);
+                if (!request.contains("\r\n\r\n") || socket->property("handled").toBool()) return;
+                socket->setProperty("handled", true);
+                if (redirect && request.startsWith("GET /start ")) {
+                    socket->write("HTTP/1.1 302 Found\r\nLocation: /redirect\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+                } else if (request.startsWith("GET /redirect ")) {
+                    socket->write("HTTP/1.1 302 Found\r\nLocation: " + callback.toUtf8()
+                        + "\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+                } else {
+                    const bool atCallback = request.startsWith("GET /oauth.html?");
+                    if (atCallback) ++callbackRequests;
+                    const QByteArray html = atCallback ? QByteArray("<title>OAuth callback</title><body>done</body><script>parent.postMessage('oauth-loaded','*')</script>")
+                        : QByteArray("<title>Authorize</title><script>") + (topNavigation ? "top.location.href='" : "location.href='") + callback.toUtf8() + "'</script>";
+                    socket->write("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "
+                        + QByteArray::number(html.size()) + "\r\nConnection: close\r\n\r\n" + html);
+                }
+                socket->disconnectFromHost();
+            });
+            connect(socket, &QTcpSocket::disconnected, socket, &QObject::deleteLater);
+        }
+    });
+    QQmlComponent component(&engine);
+    component.setData(R"QML(
+import QtQuick
+import QWebKit
+WebEngineView {
+    id: view
+    width: 320; height: 200
+    property bool rejectCallback: true
+    property string callbackCode: ""
+    property bool callbackMainFrame: false
+    property int callbackType: -1
+    property int callbacks: 0
+    property bool loadFailed: false
+    property string messages: ""
+    property string result: ""
+    function html(content: string) { loadHtml(content) }
+    function evaluate(code: string) { result = "pending"; runJavaScript(code, value => result = JSON.stringify(value)) }
+    onLoadingChanged: request => { if (request.status === WebEngineView.LoadFailedStatus) loadFailed = true }
+    onJavaScriptConsoleMessage: (level, message) => { messages += message + "\n" }
+    onNavigationRequested: request => {
+        const address = request.url.toString()
+        if (address.indexOf("/oauth.html?") === -1) return
+        callbackCode = new URLSearchParams(address.split("?")[1]).get("code")
+        callbackMainFrame = request.isMainFrame
+        callbackType = request.navigationType
+        ++callbacks
+        if (rejectCallback) request.reject()
+    }
+})QML", QUrl("qrc:/tests/OAuthNavigation.qml"));
+    QVERIFY2(component.isReady(), qPrintable(component.errorString()));
+    std::unique_ptr<QObject> view(component.create());
+    QVERIFY(view);
+    qobject_cast<QQuickItem*>(view.get())->setParentItem(window.contentItem());
+    view->setProperty("rejectCallback", reject);
+    if (subframe) {
+        const QString html = QStringLiteral("<title>Login host</title><script>addEventListener('message',e=>{if(e.data==='oauth-loaded')document.title='OAuth callback'})</script><iframe sandbox='allow-top-navigation allow-scripts allow-same-origin' src='%1/start'></iframe>").arg(base);
+        QVERIFY(QMetaObject::invokeMethod(view.get(), "html", Q_ARG(QString, html)));
+    } else {
+        QVERIFY(view->setProperty("url", QUrl(base + QStringLiteral("/start"))));
+    }
+    if (topNavigation) {
+        QTRY_VERIFY_WITH_TIMEOUT(view->property("messages").toString().contains("Unsafe attempt to initiate navigation"), 5000);
+        QCOMPARE(view->property("callbacks").toInt(), 0);
+        QCOMPARE(callbackRequests, 0);
+        return;
+    }
+    QTRY_VERIFY2_WITH_TIMEOUT(!view->property("callbackCode").toString().isEmpty(), qPrintable(view->property("messages").toString()), 5000);
+    QCOMPARE(view->property("callbackCode").toString(), QStringLiteral("TEST-CODE"));
+    QCOMPARE(view->property("callbackMainFrame").toBool(), !subframe || topNavigation);
+    QCOMPARE(view->property("callbacks").toInt(), 1);
+    if (redirect) QCOMPARE(view->property("callbackType").toInt(), 6);
+    if (reject) {
+        QTest::qWait(300);
+        QCOMPARE(callbackRequests, 0);
+        QVERIFY(!view->property("loadFailed").toBool());
+    } else {
+        QTRY_COMPARE_WITH_TIMEOUT(callbackRequests, 1, 5000);
+        QTRY_COMPARE_WITH_TIMEOUT(view->property("title").toString(), QStringLiteral("OAuth callback"), 5000);
+        const QString script = QStringLiteral("document.title");
+        QVERIFY(QMetaObject::invokeMethod(view.get(), "evaluate", Q_ARG(QString, script)));
+        QTRY_COMPARE_WITH_TIMEOUT(view->property("result").toString(), QStringLiteral("\"OAuth callback\""), 5000);
+    }
+}
 void Smoke::remotePageChannel() {
         QTcpServer server;
         QVERIFY(server.listen(QHostAddress::LocalHost));

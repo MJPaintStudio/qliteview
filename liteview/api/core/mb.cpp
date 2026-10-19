@@ -20,6 +20,7 @@
 #include "api/core/MbJsValue.h"
 #include "api/core/MbInternalApi.h"
 #include "content/browser/MbWebview.h"
+#include "content/renderer/WebLocalFrameClientImpl.h"
 #include "content/browser/SharedTimerWin.h"
 #include "content/common/LiveIdDetect.h"
 #include "content/common/ThreadCall.h"
@@ -1468,8 +1469,11 @@ void MB_CALL_TYPE mbStopLoading(mbWebView handle)
 {
     content::ThreadCall::callBlinkThreadAsyncWithValid(MB_FROM_HERE, handle, [](content::MbWebView* webview) {
         blink::WebFrame* frame = webview->getMainFrame();
-        if (frame && frame->IsWebLocalFrame())
-            frame->ToWebLocalFrame()->DeprecatedStopLoading();
+        if (frame && frame->IsWebLocalFrame()) {
+            auto* local = frame->ToWebLocalFrame();
+            static_cast<content::WebLocalFrameClientImpl*>(local->Client())->invalidatePendingNavigation();
+            local->DeprecatedStopLoading();
+        }
     });
 }
 

@@ -359,7 +359,7 @@ public:
 bool decidePolicyForNavigation(
     int64_t mbwebviewId,
     blink::WebLocalFrame* frame,
-    const blink::WebNavigationInfo& info)
+    const blink::WebNavigationInfo& info, bool isRedirect)
 {
 #if 1 // ENABLE_WKE == 1
     MbWebView* self = (MbWebView*)common::LiveIdDetect::getMbWebviewIds()->getPtr(mbwebviewId);
@@ -390,7 +390,7 @@ bool decidePolicyForNavigation(
         break;
     }
 
-    if (!qliteview::navigation(mbwebviewId, navigationType, gurl.spec().c_str(), !frame->Parent()))
+    if (!qliteview::navigation(mbwebviewId, isRedirect ? qliteview::redirectNavigation : navigationType, gurl.spec().c_str(), !frame->Parent()))
         return false;
     if (!self->getClosure().m_NavigationCallback) return true;
     BOOL result = TRUE;
@@ -418,6 +418,9 @@ static void beginNavigation(
 {
     if (!decidePolicyForNavigation(mbwebviewId, frame, *info))
         return;
+
+    if (!downloadName || downloadName->empty())
+        static_cast<WebLocalFrameClientImpl*>(frame->Client())->invalidatePendingNavigation();
 
     // srcdoc is inline HTML owned by the iframe, not a URL for libcurl.
     // Keep the parent's CSP and the iframe sandbox when committing it.

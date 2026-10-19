@@ -13,10 +13,18 @@ index d90af6605..000000000
 @@ -1 +0,0 @@
 -# 通知: 本项目已经正式迁移至 [AtomGit](https://atomgit.com/openeuler/liteview) 平台
 diff --git a/api/core/mb.cpp b/api/core/mb.cpp
-index 3e3b417c6..24bad4e0d 100644
+index 3e3b417c6..154e83d25 100644
 --- a/api/core/mb.cpp
 +++ b/api/core/mb.cpp
-@@ -487,61 +487,54 @@ void MB_CALL_TYPE mbGetCaretRect(mbWebView webviewHandle, mbRect* r)
+@@ -20,6 +20,7 @@
+ #include "api/core/MbJsValue.h"
+ #include "api/core/MbInternalApi.h"
+ #include "content/browser/MbWebview.h"
++#include "content/renderer/WebLocalFrameClientImpl.h"
+ #include "content/browser/SharedTimerWin.h"
+ #include "content/common/LiveIdDetect.h"
+ #include "content/common/ThreadCall.h"
+@@ -487,61 +488,54 @@ void MB_CALL_TYPE mbGetCaretRect(mbWebView webviewHandle, mbRect* r)
      r->h = 10;
  }
  
@@ -99,7 +107,7 @@ index 3e3b417c6..24bad4e0d 100644
  }
  
  void MB_CALL_TYPE mbRunMessageLoop()
-@@ -720,6 +713,14 @@ void MB_CALL_TYPE mbOnPaintUpdated(mbWebView webviewHandle, mbPaintUpdatedCallba
+@@ -720,6 +714,14 @@ void MB_CALL_TYPE mbOnPaintUpdated(mbWebView webviewHandle, mbPaintUpdatedCallba
      webview->setPaintUpdatedCallback(callback, param);
  }
  
@@ -114,7 +122,7 @@ index 3e3b417c6..24bad4e0d 100644
  BOOL mbFireKeyUpEventImpl(mbWebView webviewHandle, unsigned int virtualKeyCode, unsigned int flags, BOOL isSystemKey)
  {
      checkThreadCallIsValid(__FUNCTION__);
-@@ -1463,12 +1464,13 @@ BOOL MB_CALL_TYPE mbIsLoading(mbWebView webView)
+@@ -1463,12 +1465,16 @@ BOOL MB_CALL_TYPE mbIsLoading(mbWebView webView)
      return FALSE;
  }
  
@@ -127,13 +135,16 @@ index 3e3b417c6..24bad4e0d 100644
 -    //DebugBreak();
 +    content::ThreadCall::callBlinkThreadAsyncWithValid(MB_FROM_HERE, handle, [](content::MbWebView* webview) {
 +        blink::WebFrame* frame = webview->getMainFrame();
-+        if (frame && frame->IsWebLocalFrame())
-+            frame->ToWebLocalFrame()->DeprecatedStopLoading();
++        if (frame && frame->IsWebLocalFrame()) {
++            auto* local = frame->ToWebLocalFrame();
++            static_cast<content::WebLocalFrameClientImpl*>(local->Client())->invalidatePendingNavigation();
++            local->DeprecatedStopLoading();
++        }
 +    });
  }
  
  void MB_CALL_TYPE mbNetSetHTTPHeaderField(mbNetJob jobPtr, const wchar_t* key, const wchar_t* value, BOOL response)
-@@ -1491,12 +1493,7 @@ void MB_CALL_TYPE mbNetSetHTTPHeaderField(mbNetJob jobPtr, const wchar_t* key, c
+@@ -1491,12 +1497,7 @@ void MB_CALL_TYPE mbNetSetHTTPHeaderField(mbNetJob jobPtr, const wchar_t* key, c
  
  void MB_CALL_TYPE mbEditorSelectAll(mbWebView webviewHandle)
  {
@@ -339,7 +350,7 @@ index ea66929d1..71bb23d6f 100644
  
  }
 diff --git a/content/browser/MbWebview.cpp b/content/browser/MbWebview.cpp
-index 822139fef..cc5822ca7 100644
+index 822139fef..483d56f62 100644
 --- a/content/browser/MbWebview.cpp
 +++ b/content/browser/MbWebview.cpp
 @@ -593,14 +593,14 @@ void MbWebView::setDefaultPreferences(blink::WebViewImpl* webWiew)
@@ -398,7 +409,16 @@ index 822139fef..cc5822ca7 100644
      }
  
      //onCursorChange();
-@@ -1717,7 +1721,7 @@ void MbWebView::reload(bool force)
+@@ -1706,6 +1710,8 @@ bool MbWebView::loadHTMLString(const std::string& html, const std::string& baseU
+     if (!impl)
+         return false;
+ 
++    static_cast<WebLocalFrameClientImpl*>(impl->Client())->invalidatePendingNavigation();
++    impl->DeprecatedStopLoading();
+     std::unique_ptr<blink::WebNavigationParams> navigationParams =
+         blink::WebNavigationParams::CreateWithHTMLStringForTesting(html, blink::WebURL(blink::KURL(String::FromUTF8(baseUrl))));
+     impl->CommitNavigation(std::move(navigationParams), nullptr /* extra_data */);
+@@ -1717,7 +1723,7 @@ void MbWebView::reload(bool force)
  {
      if (!m_renderWidgetHostImpl || !m_renderWidgetHostImpl->m_mainFrame)
          return;
@@ -407,7 +427,7 @@ index 822139fef..cc5822ca7 100644
  }
  
  LRESULT MbWebView::fireWheelEventOnUiThread(WPARAM wParam, LPARAM lParam)
-@@ -1969,8 +1973,8 @@ static void callRunJsCallbackOnUiThread(mbWebView webviewHandle, void* param, mb
+@@ -1969,8 +1975,8 @@ static void callRunJsCallbackOnUiThread(mbWebView webviewHandle, void* param, mb
  {
      MbWebView* webview = (MbWebView*)common::LiveIdDetect::getMbWebviewIds()->getPtr(webviewHandle);
      if (webview)
@@ -418,7 +438,7 @@ index 822139fef..cc5822ca7 100644
  
      freeTempCharStrings();
  }
-@@ -1989,6 +1993,8 @@ void runJsOnBlinkThread(mbWebView webviewHandle, mbWebFrameHandle frameId, int w
+@@ -1989,6 +1995,8 @@ void runJsOnBlinkThread(mbWebView webviewHandle, mbWebFrameHandle frameId, int w
          content::ThreadCall::callUiThreadAsync(MB_FROM_HERE, [webviewHandle, param, callback, mbVal] {
              callRunJsCallbackOnUiThread(webviewHandle, param, callback, nullptr, mbVal);
          });
@@ -455,7 +475,7 @@ index 8e63408bf..03d5fe1eb 100644
  #endif
  
 diff --git a/content/renderer/WebLocalFrameClientImpl.cpp b/content/renderer/WebLocalFrameClientImpl.cpp
-index b88b9a4ca..db82f465d 100644
+index b88b9a4ca..c6abaec16 100644
 --- a/content/renderer/WebLocalFrameClientImpl.cpp
 +++ b/content/renderer/WebLocalFrameClientImpl.cpp
 @@ -12,6 +12,7 @@
@@ -514,7 +534,14 @@ index b88b9a4ca..db82f465d 100644
      //request.AddHttpHeaderField("Cache-Control", "max-age=0");
  
      //     WebViewImpl* viewImpl = m_webPage->webViewImpl();
-@@ -352,8 +365,6 @@ bool decidePolicyForNavigation(
+@@ -346,14 +359,12 @@ public:
+ bool decidePolicyForNavigation(
+     int64_t mbwebviewId,
+     blink::WebLocalFrame* frame,
+-    const blink::WebNavigationInfo& info)
++    const blink::WebNavigationInfo& info, bool isRedirect)
+ {
+ #if 1 // ENABLE_WKE == 1
      MbWebView* self = (MbWebView*)common::LiveIdDetect::getMbWebviewIds()->getPtr(mbwebviewId);
      if (!self)
          return true;
@@ -527,16 +554,19 @@ index b88b9a4ca..db82f465d 100644
          break;
      }
  
-+    if (!qliteview::navigation(mbwebviewId, navigationType, gurl.spec().c_str(), !frame->Parent()))
++    if (!qliteview::navigation(mbwebviewId, isRedirect ? qliteview::redirectNavigation : navigationType, gurl.spec().c_str(), !frame->Parent()))
 +        return false;
 +    if (!self->getClosure().m_NavigationCallback) return true;
      BOOL result = TRUE;
      mbWebView webviewHandle = (mbWebView)mbwebviewId;
      std::string urlStr = gurl.possibly_invalid_spec().c_str();
-@@ -405,6 +419,41 @@ static void beginNavigation(
+@@ -405,6 +419,44 @@ static void beginNavigation(
      if (!decidePolicyForNavigation(mbwebviewId, frame, *info))
          return;
  
++    if (!downloadName || downloadName->empty())
++        static_cast<WebLocalFrameClientImpl*>(frame->Client())->invalidatePendingNavigation();
++
 +    // srcdoc is inline HTML owned by the iframe, not a URL for libcurl.
 +    // Keep the parent's CSP and the iframe sandbox when committing it.
 +    if (blink::KURL(info->url_request.Url()).IsAboutSrcdocURL()) {
@@ -575,7 +605,7 @@ index b88b9a4ca..db82f465d 100644
      const blink::FrameToken& token = frame->GetFrameToken();
      ::network::mojom::URLResponseHeadPtr urlResponseHead = ::network::mojom::URLResponseHead::New();
  
-@@ -569,8 +618,15 @@ void WebLocalFrameClientImpl::DidCommitDocumentReplacementNavigation(blink::WebD
+@@ -569,8 +621,15 @@ void WebLocalFrameClientImpl::DidCommitDocumentReplacementNavigation(blink::WebD
      //updateStateForCommit(commitType, true);
  }
  
@@ -591,7 +621,7 @@ index b88b9a4ca..db82f465d 100644
      MbWebView* webview = (MbWebView*)common::LiveIdDetect::getMbWebviewIds()->getPtr(m_mbwebviewId);
      if (!webview)
          return;
-@@ -957,6 +1013,7 @@ void WebLocalFrameClientImpl::onLoadingSucceeded()
+@@ -957,6 +1016,7 @@ void WebLocalFrameClientImpl::onLoadingSucceeded()
  
  void WebLocalFrameClientImpl::DidFinishLoad()
  {
@@ -599,7 +629,7 @@ index b88b9a4ca..db82f465d 100644
      OutputDebugStringA(m_isMainFrame ? "WebLocalFrameClientImpl::DidFinishLoad main\n" : "WebLocalFrameClientImpl::DidFinishLoad not main\n");
  }
  
-@@ -1083,9 +1140,11 @@ void WebLocalFrameClientImpl::GetInterface(::mojo::GenericPendingReceiver receiv
+@@ -1083,9 +1143,11 @@ void WebLocalFrameClientImpl::GetInterface(::mojo::GenericPendingReceiver receiv
  }
  
  void WebLocalFrameClientImpl::ensureMbMedia() {
@@ -613,10 +643,20 @@ index b88b9a4ca..db82f465d 100644
  }
 \ No newline at end of file
 diff --git a/content/renderer/WebLocalFrameClientImpl.h b/content/renderer/WebLocalFrameClientImpl.h
-index 505812716..67068a11e 100644
+index 505812716..0ddf97522 100644
 --- a/content/renderer/WebLocalFrameClientImpl.h
 +++ b/content/renderer/WebLocalFrameClientImpl.h
-@@ -90,6 +90,7 @@ public:
+@@ -39,6 +39,9 @@ class PolicyContainerHostImpl;
+ class AssociatedInterfaceProviderImpl;
+ class BlinkInterfaceRegistryImpl;
+ 
++bool decidePolicyForNavigation(int64_t mbwebviewId, blink::WebLocalFrame* frame,
++    const blink::WebNavigationInfo& info, bool isRedirect = false);
++
+ intptr_t getFrameIdByWebLocalFrame(blink::WebLocalFrame* frame);
+ intptr_t getParentFrameId(intptr_t frame);
+ 
+@@ -90,6 +93,7 @@ public:
          blink::mojom::SameDocumentNavigationType, 
          bool is_client_redirect) override;
  
@@ -624,6 +664,25 @@ index 505812716..67068a11e 100644
      void DidStartLoading() override;
  
      blink::WebView* CreateNewWindow(const blink::WebURLRequest& request,
+@@ -125,6 +129,9 @@ public:
+     int64_t getMbwebviewId() const { return m_mbwebviewId; }
+     blink::WebNavigationControl* getNavigationControl() const { return m_navigationControl; }
+ 
++    void invalidatePendingNavigation() { ++m_navigationGeneration; }
++    uint64_t navigationGeneration() const { return m_navigationGeneration; }
++
+     void beginDownload(std::unique_ptr<blink::WebNavigationInfo> info, std::unique_ptr<String> downloadName);
+ 
+     void updateStateForCommit(blink::WebHistoryCommitType commitType, bool should_ReplaceCurrentEntry);
+@@ -149,6 +156,8 @@ public:
+ 
+     int64_t m_mbwebviewId = 0;
+ 
++    uint64_t m_navigationGeneration = 0;
++
+     bool m_isMainFrame = false;
+ 
+     int m_onLoadingSucceededCount = 0;
 diff --git a/content/viz/OffscreenDisplayClient.cpp b/content/viz/OffscreenDisplayClient.cpp
 index 490a80ef0..1cbd21b19 100644
 --- a/content/viz/OffscreenDisplayClient.cpp
@@ -2484,7 +2543,7 @@ index 3f7b7bb59..cba6742c1 100644
      IndexStorageType index_type_;
      ResultData result_;
 diff --git a/mbnet/LoaderFactoryImpl.cpp b/mbnet/LoaderFactoryImpl.cpp
-index da175cb47..a33853218 100644
+index da175cb47..cd2bc065b 100644
 --- a/mbnet/LoaderFactoryImpl.cpp
 +++ b/mbnet/LoaderFactoryImpl.cpp
 @@ -14,6 +14,9 @@
@@ -2497,7 +2556,92 @@ index da175cb47..a33853218 100644
  #include "content/common/CreateAndBindTempl.h"
  
  #include "mojo/public/cpp/bindings/associated_receiver.h"
-@@ -219,6 +222,21 @@ void BodyLoaderClient::DidFail(
+@@ -55,12 +58,21 @@ BodyLoaderClient::BodyLoaderClient(
+ 
+     m_urlLoaderImpl = nullptr;
+     m_frameToken = token;
++    auto* frame = blink::WebLocalFrame::FromFrameToken(m_navigationControlId);
++    if (frame)
++        m_navigationGeneration = static_cast<content::WebLocalFrameClientImpl*>(frame->Client())->navigationGeneration();
+ 
+     char output[100] = { 0 };
+     sprintf(output, "BodyLoaderClient: %p, %p\n", this, m_urlLoaderImpl.get());
+     OutputDebugStringA(output);
+ }
+ 
++bool BodyLoaderClient::isNavigationCurrent() const
++{
++    auto* frame = blink::WebLocalFrame::FromFrameToken(m_navigationControlId);
++    return frame && static_cast<content::WebLocalFrameClientImpl*>(frame->Client())->navigationGeneration() == m_navigationGeneration;
++}
++
+ BodyLoaderClient::~BodyLoaderClient()
+ {
+     char output[100] = { 0 };
+@@ -78,14 +90,23 @@ bool BodyLoaderClient::WillFollowRedirect(const blink::WebURL& newUrl, const net
+     network::mojom::ReferrerPolicy newReferrerPolicy, const blink::WebString& newMethod, const blink::WebURLResponse& passedRedirectResponse,
+     bool& reportRaw_headers, std::vector<std::string>* removedHeaders, bool insecureSchemeWasUpgraded)
+ {
++    if (!m_isDownload && !isNavigationCurrent())
++        return false;
+     m_info->url_request.SetUrl(newUrl);
+     m_info->url_request.SetHttpMethod(newMethod);
+     m_info->url_request.SetReferrerString(newReferrer);
+     m_info->url_request.SetReferrerPolicy(newReferrerPolicy);
+ 
+     blink::WebNavigationControl* navigationControl = (blink::WebNavigationControl*)blink::WebLocalFrame::FromFrameToken(m_navigationControlId);
+-    if (navigationControl)
+-        navigationControl->WillStartNavigation(*(m_info.get()));
++    if (!navigationControl)
++        return false;
++    auto* frameClient = static_cast<content::WebLocalFrameClientImpl*>(navigationControl->Client());
++    if (!content::decidePolicyForNavigation(frameClient->getMbwebviewId(), navigationControl, *m_info, true)) {
++        frameClient->invalidatePendingNavigation();
++        navigationControl->DidDropNavigation();
++        return false;
++    }
++    navigationControl->WillStartNavigation(*m_info);
+ 
+     return true;
+ }
+@@ -98,6 +119,8 @@ void BodyLoaderClient::DidReceiveResponse(const blink::WebURLResponse& response)
+ 
+ void BodyLoaderClient::DidStartLoadingResponseBody(mojo::ScopedDataPipeConsumerHandle responseBodyConsumer)
+ {
++    if (!isNavigationCurrent())
++        return;
+     blink::WebFrame* frame = blink::WebFrame::FromFrameToken(m_frameToken);
+     if (!frame)
+         return;
+@@ -158,7 +181,8 @@ void BodyLoaderClient::DidStartLoadingResponseBody(mojo::ScopedDataPipeConsumerH
+ // iframe.src = "data:text/html;charset=utf-8,<!DOCTYPE html><script>parent.postMessage(document.contentType,'*')<\/script>";
+ void BodyLoaderClient::DidReceiveData(const char* data, int dataLength)
+ {
+-    pushBackToBuffer(&m_buf, data, dataLength);
++    if (isNavigationCurrent())
++        pushBackToBuffer(&m_buf, data, dataLength);
+ //     uint32_t numBytes = dataLength;
+ //     MojoWriteData(m_dataPipeProducerHandle, data, &numBytes, nullptr);
+ }
+@@ -166,7 +190,7 @@ void BodyLoaderClient::DidReceiveData(const char* data, int dataLength)
+ void BodyLoaderClient::DidFinishLoading(base::TimeTicks finish_time, int64_t total_encoded_data_length, int64_t total_encoded_body_length,
+     int64_t total_decoded_body_length, bool should_report_corb_blocking, absl::optional<bool> pervasive_payload_requested)
+ {
+-    if (m_isDownload) {
++    if (m_isDownload || !isNavigationCurrent()) {
+         delete this;
+         return;
+     }
+@@ -203,7 +227,7 @@ void BodyLoaderClient::DidFail(
+     int64_t total_encoded_body_length,
+     int64_t total_decoded_body_length)
+ {
+-    if (m_isDownload) {
++    if (m_isDownload || !isNavigationCurrent()) {
+         delete this;
+         return;
+     }
+@@ -219,6 +243,21 @@ void BodyLoaderClient::DidFail(
              m_urlLoaderImpl->m_urlLoaderClient->OnComplete(status);
          m_urlLoaderImpl->m_canDestroy = true;
          m_urlLoaderImpl.reset();
@@ -2520,18 +2664,19 @@ index da175cb47..a33853218 100644
      delete this;
  }
 diff --git a/mbnet/WebURLLoaderManager.cpp b/mbnet/WebURLLoaderManager.cpp
-index e34819fbf..5fa845ef2 100644
+index e34819fbf..838078c89 100644
 --- a/mbnet/WebURLLoaderManager.cpp
 +++ b/mbnet/WebURLLoaderManager.cpp
-@@ -38,6 +38,7 @@
+@@ -38,6 +38,8 @@
  #define PURE = 0
  #endif
  
 +#include "content/WindowsTls.h"
++#include "content/common/ThreadCall.h"
  #include <shlobj.h>
  #include <shlwapi.h>
  #include <shellapi.h>
-@@ -113,6 +114,10 @@ CURLM* WebURLLoaderManager::getCurrentThreadCurlMultiHandle() const
+@@ -113,6 +115,10 @@ CURLM* WebURLLoaderManager::getCurrentThreadCurlMultiHandle() const
  
  static void setCookiePath(CURL* handle, std::string cookieJarPath)
  {
@@ -2542,7 +2687,7 @@ index e34819fbf..5fa845ef2 100644
      if (0 == cookieJarPath.size())
          return;
  
-@@ -188,8 +193,7 @@ int testCURL(const char* url)
+@@ -188,8 +194,7 @@ int testCURL(const char* url)
      curl_easy_setopt(curl, CURLOPT_WRITEDATA, NULL);
      curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, headerCallbackTest);
  
@@ -2552,7 +2697,68 @@ index e34819fbf..5fa845ef2 100644
      curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 1);
      curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
      curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
-@@ -1043,7 +1047,17 @@ bool WebURLLoaderManager::downloadOnIoThread()
+@@ -880,24 +885,42 @@ static bool checkIsProxyHead(WebURLLoaderInternal* job, char* ptr, size_t size)
+ 
+ static size_t headerCallbackOnIoThread(char* ptr, size_t size, size_t nmemb, void* data)
+ {
+-    int jobId = (int)data;
+-    AutoLockJob autoLockJob(WebURLLoaderManager::sharedInstance(), jobId);
+-    WebURLLoaderInternal* job = autoLockJob.lock();
+-    if (!job || job->isCancelled())
+-        return 0;
+-
+-    // We should never be called when deferred loading is activated.
+-    DCHECK(!job->m_defersLoading);
+-
+-    size_t totalSize = size * nmemb;
+-    if (checkIsProxyHead(job, ptr, totalSize))
+-        return totalSize;
+-
+-    if (0 == size * nmemb)
+-        DCHECK(false);
+-
+-    job->m_hasCallResponse = true;
+-    WebURLLoaderManagerMainTask::createAndPushTask(jobId, WebURLLoaderManagerMainTask::TaskType::kHeaderCallback, ptr, size, nmemb, totalSize);
++    const int jobId = (int)data;
++    const size_t totalSize = size * nmemb;
++    std::unique_ptr<WebURLLoaderManagerMainTask> redirectTask;
++    {
++        AutoLockJob autoLockJob(WebURLLoaderManager::sharedInstance(), jobId);
++        WebURLLoaderInternal* job = autoLockJob.lock();
++        if (!job || job->isCancelled())
++            return 0;
++
++        DCHECK(!job->m_defersLoading);
++        if (checkIsProxyHead(job, ptr, totalSize))
++            return totalSize;
++        DCHECK(totalSize);
++        job->m_hasCallResponse = true;
++
++        long httpCode = 0;
++        curl_easy_getinfo(job->m_handle, CURLINFO_RESPONSE_CODE, &httpCode);
++        const bool endOfHeaders = (totalSize == 2 && ptr[0] == '\r' && ptr[1] == '\n')
++            || (totalSize == 1 && ptr[0] == '\n');
++        if (!job->m_isSynchronous && job->m_frameType != blink::mojom::RequestContextFrameType::kNone
++            && endOfHeaders && httpCode >= 300 && httpCode < 400 && httpCode != 304) {
++            redirectTask.reset(WebURLLoaderManagerMainTask::createTask(jobId,
++                WebURLLoaderManagerMainTask::kHeaderCallback, ptr, size, nmemb, totalSize));
++        } else {
++            WebURLLoaderManagerMainTask::createAndPushTask(jobId,
++                WebURLLoaderManagerMainTask::kHeaderCallback, ptr, size, nmemb, totalSize);
++        }
++    }
++    if (redirectTask) {
++        // Decide before curl follows Location. Do not hold a job reference
++        // while waiting: frame destruction may release the job on Blink.
++        content::ThreadCall::callBlinkThreadSync(FROM_HERE, [&redirectTask] { redirectTask->run(); });
++        AutoLockJob autoLockJob(WebURLLoaderManager::sharedInstance(), jobId);
++        auto* job = autoLockJob.lock();
++        return job && !job->isCancelled() ? totalSize : 0;
++    }
+     return totalSize;
+ }
+ 
+@@ -1043,7 +1066,17 @@ bool WebURLLoaderManager::downloadOnIoThread()
                  url = "url is empty";
              if (job->client() && job->loader()) {
                  URLError* resourceError = new URLError();
@@ -2571,7 +2777,7 @@ index e34819fbf..5fa845ef2 100644
                  resourceError->domain = url;
                  resourceError->unreachableURL = url;
                  resourceError->localizedDescription = curl_easy_strerror(msg->data.result);
-@@ -2190,8 +2204,7 @@ void WebURLLoaderManager::initializeHandleOnIoThread(int jobId, InitializeHandle
+@@ -2190,8 +2223,7 @@ void WebURLLoaderManager::initializeHandleOnIoThread(int jobId, InitializeHandle
  #endif
      curl_easy_setopt(job->m_handle, CURLOPT_TIMEOUT, 60 * 10); // 请求从开始到完结的时间。如果请求不停有数据来，超过这个时间也被认为是超时
      curl_easy_setopt(job->m_handle, CURLOPT_CONNECTTIMEOUT, 30);
@@ -3021,3 +3227,45 @@ index 8dd2e0b55..c547082ad 100644
  #else
      U32 wide = cast<U32>(half);
      // A half is 1-5-10 sign-exponent-mantissa, with 15 exponent bias.
+diff --git a/mbnet/LoaderFactoryImpl.h b/mbnet/LoaderFactoryImpl.h
+index 466d4d11b..d7ce6e714 100644
+--- a/mbnet/LoaderFactoryImpl.h
++++ b/mbnet/LoaderFactoryImpl.h
+@@ -173,6 +173,8 @@ public:
+         int64_t total_decoded_body_length) override;
+ 
+ protected:
++    bool isNavigationCurrent() const;
++    uint64_t m_navigationGeneration = 0;
+     blink::FrameToken m_frameToken;
+     std::unique_ptr<blink::WebNavigationInfo> m_info;
+     blink::LocalFrameToken m_navigationControlId;
+diff --git a/mbnet/WebURLLoaderManagerMainTask.h b/mbnet/WebURLLoaderManagerMainTask.h
+index 515ae92f3..7087104b1 100644
+--- a/mbnet/WebURLLoaderManagerMainTask.h
++++ b/mbnet/WebURLLoaderManagerMainTask.h
+@@ -22,6 +22,7 @@
+ #include "third_party/blink/public/platform/web_security_origin.h"
+ #include "third_party/blink/renderer/platform/network/http_parsers.h"
+ #include "net/http/http_util.h"
++#include "net/base/net_errors.h"
+ #include "third_party/blink/renderer/platform/wtf/text/string_utf8_adaptor.h"
+ #include "third_party/blink/public/mojom/loader/resource_load_info.mojom-shared.h"
+ 
+@@ -849,9 +850,14 @@ static void doRedirect(WebURLLoaderInternal* job, const std::string& location, M
+ 
+         bool reportRawHeaders = false;
+         std::vector<std::string> removedHeaders;
+-        client->WillFollowRedirect(newURL, net::SiteForCookies(), newReferrer,
++        if (!client->WillFollowRedirect(newURL, net::SiteForCookies(), newReferrer,
+             /*network::mojom::ReferrerPolicy()*/network::mojom::ReferrerPolicy::kAlways, newMethod, job->m_response/*passed_redirect_response*/,
+-            reportRawHeaders, &removedHeaders, /*insecure_scheme_was_upgraded*/false);
++            reportRawHeaders, &removedHeaders, /*insecure_scheme_was_upgraded*/false)) {
++            job->resetClient();
++            WebURLLoaderManager::sharedInstance()->cancel(job->m_id);
++            client->DidFail(blink::WebURLError(net::ERR_ABORTED, newURL), base::TimeTicks::Now(), 0, 0, 0);
++            return;
++        }
+     }
+ 
+     if (isRedirectByHttpCode)

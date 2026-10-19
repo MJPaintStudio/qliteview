@@ -1710,6 +1710,8 @@ bool MbWebView::loadHTMLString(const std::string& html, const std::string& baseU
     if (!impl)
         return false;
 
+    static_cast<WebLocalFrameClientImpl*>(impl->Client())->invalidatePendingNavigation();
+    impl->DeprecatedStopLoading();
     std::unique_ptr<blink::WebNavigationParams> navigationParams =
         blink::WebNavigationParams::CreateWithHTMLStringForTesting(html, blink::WebURL(blink::KURL(String::FromUTF8(baseUrl))));
     impl->CommitNavigation(std::move(navigationParams), nullptr /* extra_data */);

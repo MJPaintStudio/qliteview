@@ -58,10 +58,19 @@ BodyLoaderClient::BodyLoaderClient(
 
     m_urlLoaderImpl = nullptr;
     m_frameToken = token;
+    auto* frame = blink::WebLocalFrame::FromFrameToken(m_navigationControlId);
+    if (frame)
+        m_navigationGeneration = static_cast<content::WebLocalFrameClientImpl*>(frame->Client())->navigationGeneration();
 
     char output[100] = { 0 };
     sprintf(output, "BodyLoaderClient: %p, %p\n", this, m_urlLoaderImpl.get());
     OutputDebugStringA(output);
+}
+
+bool BodyLoaderClient::isNavigationCurrent() const
+{
+    auto* frame = blink::WebLocalFrame::FromFrameToken(m_navigationControlId);
+    return frame && static_cast<content::WebLocalFrameClientImpl*>(frame->Client())->navigationGeneration() == m_navigationGeneration;
 }
 
 BodyLoaderClient::~BodyLoaderClient()
@@ -81,14 +90,23 @@ bool BodyLoaderClient::WillFollowRedirect(const blink::WebURL& newUrl, const net
     network::mojom::ReferrerPolicy newReferrerPolicy, const blink::WebString& newMethod, const blink::WebURLResponse& passedRedirectResponse,
     bool& reportRaw_headers, std::vector<std::string>* removedHeaders, bool insecureSchemeWasUpgraded)
 {
+    if (!m_isDownload && !isNavigationCurrent())
+        return false;
     m_info->url_request.SetUrl(newUrl);
     m_info->url_request.SetHttpMethod(newMethod);
     m_info->url_request.SetReferrerString(newReferrer);
     m_info->url_request.SetReferrerPolicy(newReferrerPolicy);
 
     blink::WebNavigationControl* navigationControl = (blink::WebNavigationControl*)blink::WebLocalFrame::FromFrameToken(m_navigationControlId);
-    if (navigationControl)
-        navigationControl->WillStartNavigation(*(m_info.get()));
+    if (!navigationControl)
+        return false;
+    auto* frameClient = static_cast<content::WebLocalFrameClientImpl*>(navigationControl->Client());
+    if (!content::decidePolicyForNavigation(frameClient->getMbwebviewId(), navigationControl, *m_info, true)) {
+        frameClient->invalidatePendingNavigation();
+        navigationControl->DidDropNavigation();
+        return false;
+    }
+    navigationControl->WillStartNavigation(*m_info);
 
     return true;
 }
@@ -101,6 +119,8 @@ void BodyLoaderClient::DidReceiveResponse(const blink::WebURLResponse& response)
 
 void BodyLoaderClient::DidStartLoadingResponseBody(mojo::ScopedDataPipeConsumerHandle responseBodyConsumer)
 {
+    if (!isNavigationCurrent())
+        return;
     blink::WebFrame* frame = blink::WebFrame::FromFrameToken(m_frameToken);
     if (!frame)
         return;
@@ -161,7 +181,8 @@ void BodyLoaderClient::DidStartLoadingResponseBody(mojo::ScopedDataPipeConsumerH
 // iframe.src = "data:text/html;charset=utf-8,<!DOCTYPE html><script>parent.postMessage(document.contentType,'*')<\/script>";
 void BodyLoaderClient::DidReceiveData(const char* data, int dataLength)
 {
-    pushBackToBuffer(&m_buf, data, dataLength);
+    if (isNavigationCurrent())
+        pushBackToBuffer(&m_buf, data, dataLength);
 //     uint32_t numBytes = dataLength;
 //     MojoWriteData(m_dataPipeProducerHandle, data, &numBytes, nullptr);
 }
@@ -169,7 +190,7 @@ void BodyLoaderClient::DidReceiveData(const char* data, int dataLength)
 void BodyLoaderClient::DidFinishLoading(base::TimeTicks finish_time, int64_t total_encoded_data_length, int64_t total_encoded_body_length,
     int64_t total_decoded_body_length, bool should_report_corb_blocking, absl::optional<bool> pervasive_payload_requested)
 {
-    if (m_isDownload) {
+    if (m_isDownload || !isNavigationCurrent()) {
         delete this;
         return;
     }
@@ -206,7 +227,7 @@ void BodyLoaderClient::DidFail(
     int64_t total_encoded_body_length,
     int64_t total_decoded_body_length)
 {
-    if (m_isDownload) {
+    if (m_isDownload || !isNavigationCurrent()) {
         delete this;
         return;
     }

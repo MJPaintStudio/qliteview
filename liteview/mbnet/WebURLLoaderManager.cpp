@@ -39,6 +39,7 @@
 #endif
 
 #include "content/WindowsTls.h"
+#include "content/common/ThreadCall.h"
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <shellapi.h>
@@ -884,24 +885,42 @@ static bool checkIsProxyHead(WebURLLoaderInternal* job, char* ptr, size_t size)
 
 static size_t headerCallbackOnIoThread(char* ptr, size_t size, size_t nmemb, void* data)
 {
-    int jobId = (int)data;
-    AutoLockJob autoLockJob(WebURLLoaderManager::sharedInstance(), jobId);
-    WebURLLoaderInternal* job = autoLockJob.lock();
-    if (!job || job->isCancelled())
-        return 0;
+    const int jobId = (int)data;
+    const size_t totalSize = size * nmemb;
+    std::unique_ptr<WebURLLoaderManagerMainTask> redirectTask;
+    {
+        AutoLockJob autoLockJob(WebURLLoaderManager::sharedInstance(), jobId);
+        WebURLLoaderInternal* job = autoLockJob.lock();
+        if (!job || job->isCancelled())
+            return 0;
 
-    // We should never be called when deferred loading is activated.
-    DCHECK(!job->m_defersLoading);
+        DCHECK(!job->m_defersLoading);
+        if (checkIsProxyHead(job, ptr, totalSize))
+            return totalSize;
+        DCHECK(totalSize);
+        job->m_hasCallResponse = true;
 
-    size_t totalSize = size * nmemb;
-    if (checkIsProxyHead(job, ptr, totalSize))
-        return totalSize;
-
-    if (0 == size * nmemb)
-        DCHECK(false);
-
-    job->m_hasCallResponse = true;
-    WebURLLoaderManagerMainTask::createAndPushTask(jobId, WebURLLoaderManagerMainTask::TaskType::kHeaderCallback, ptr, size, nmemb, totalSize);
+        long httpCode = 0;
+        curl_easy_getinfo(job->m_handle, CURLINFO_RESPONSE_CODE, &httpCode);
+        const bool endOfHeaders = (totalSize == 2 && ptr[0] == '\r' && ptr[1] == '\n')
+            || (totalSize == 1 && ptr[0] == '\n');
+        if (!job->m_isSynchronous && job->m_frameType != blink::mojom::RequestContextFrameType::kNone
+            && endOfHeaders && httpCode >= 300 && httpCode < 400 && httpCode != 304) {
+            redirectTask.reset(WebURLLoaderManagerMainTask::createTask(jobId,
+                WebURLLoaderManagerMainTask::kHeaderCallback, ptr, size, nmemb, totalSize));
+        } else {
+            WebURLLoaderManagerMainTask::createAndPushTask(jobId,
+                WebURLLoaderManagerMainTask::kHeaderCallback, ptr, size, nmemb, totalSize);
+        }
+    }
+    if (redirectTask) {
+        // Decide before curl follows Location. Do not hold a job reference
+        // while waiting: frame destruction may release the job on Blink.
+        content::ThreadCall::callBlinkThreadSync(FROM_HERE, [&redirectTask] { redirectTask->run(); });
+        AutoLockJob autoLockJob(WebURLLoaderManager::sharedInstance(), jobId);
+        auto* job = autoLockJob.lock();
+        return job && !job->isCancelled() ? totalSize : 0;
+    }
     return totalSize;
 }
 

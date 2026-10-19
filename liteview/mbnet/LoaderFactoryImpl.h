@@ -173,6 +173,8 @@ public:
         int64_t total_decoded_body_length) override;
 
 protected:
+    bool isNavigationCurrent() const;
+    uint64_t m_navigationGeneration = 0;
     blink::FrameToken m_frameToken;
     std::unique_ptr<blink::WebNavigationInfo> m_info;
     blink::LocalFrameToken m_navigationControlId;

@@ -39,6 +39,9 @@ class PolicyContainerHostImpl;
 class AssociatedInterfaceProviderImpl;
 class BlinkInterfaceRegistryImpl;
 
+bool decidePolicyForNavigation(int64_t mbwebviewId, blink::WebLocalFrame* frame,
+    const blink::WebNavigationInfo& info, bool isRedirect = false);
+
 intptr_t getFrameIdByWebLocalFrame(blink::WebLocalFrame* frame);
 intptr_t getParentFrameId(intptr_t frame);
 
@@ -126,6 +129,9 @@ public:
     int64_t getMbwebviewId() const { return m_mbwebviewId; }
     blink::WebNavigationControl* getNavigationControl() const { return m_navigationControl; }
 
+    void invalidatePendingNavigation() { ++m_navigationGeneration; }
+    uint64_t navigationGeneration() const { return m_navigationGeneration; }
+
     void beginDownload(std::unique_ptr<blink::WebNavigationInfo> info, std::unique_ptr<String> downloadName);
 
     void updateStateForCommit(blink::WebHistoryCommitType commitType, bool should_ReplaceCurrentEntry);
@@ -149,6 +155,8 @@ public:
 
 
     int64_t m_mbwebviewId = 0;
+
+    uint64_t m_navigationGeneration = 0;
 
     bool m_isMainFrame = false;
 

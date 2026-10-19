@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include "include/content/QtBridgeHooks.h"
 
 #ifdef QLITEBRIDGE_BUILD
 #define QLV_API __declspec(dllexport)

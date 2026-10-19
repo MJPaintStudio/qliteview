@@ -25,6 +25,11 @@ private slots:
     void httpNetworkProcess();
     void compressedResponses();
     void htmlWithoutBaseUrl();
+    void htmlReplacesInitialUrl();
+    void htmlReplacesPendingNavigation_data();
+    void htmlReplacesPendingNavigation();
+    void oauthNavigation_data();
+    void oauthNavigation();
     void remotePageChannel();
     void hostPages();
     void pixelScale();
