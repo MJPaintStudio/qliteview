@@ -24,33 +24,13 @@ target_compile_definitions(qliteview PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN QWEBKI
 target_compile_options(qliteview PRIVATE /utf-8)
 target_link_options(qliteview PRIVATE /DELAYLOAD:livicore.dll)
 
-if(QLITEVIEW_EMBED_RUNTIME)
-    set(manifest "${QLITEVIEW_RUNTIME_DIR}/manifest.json")
-    if(NOT EXISTS "${manifest}")
-        message(FATAL_ERROR "Run tools/Prepare-Runtime.ps1 before embedding the native runtime.")
-    endif()
-    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${manifest}")
-    file(READ "${manifest}" runtime_json)
-    string(JSON runtime_count LENGTH "${runtime_json}" files)
-    if(runtime_count LESS 1)
-        message(FATAL_ERROR "The runtime manifest is empty.")
-    endif()
-    math(EXPR runtime_last "${runtime_count} - 1")
-    set(runtime_files "${manifest}")
-    foreach(index RANGE 0 ${runtime_last})
-        string(JSON runtime_file GET "${runtime_json}" files ${index} path)
-        list(APPEND runtime_files "${QLITEVIEW_RUNTIME_DIR}/${runtime_file}")
-    endforeach()
-    qt_add_resources(qliteview "qliteview_runtime"
-        BIG_RESOURCES
-        PREFIX "/qliteview/runtime"
-        BASE "${QLITEVIEW_RUNTIME_DIR}"
-        FILES ${runtime_files}
-        # Let the installer compress the native PE directly. Compressing it here
-        # first prevents LZMA2 from finding redundancy in its code and data.
-        OPTIONS --no-compress
-    )
-    target_compile_definitions(qliteview PRIVATE QWEBKIT_EMBED_RUNTIME)
-else()
-    target_compile_definitions(qliteview PRIVATE QWEBKIT_DEV_RUNTIME_DIR="${QLITEVIEW_RUNTIME_DIR}")
+if(NOT EXISTS "${QLITEVIEW_RUNTIME_DIR}/livicore.dll")
+    message(FATAL_ERROR "Run tools/Prepare-Runtime.ps1 before building QLiteView.")
 endif()
+add_custom_target(qliteview_runtime
+    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:qliteview>"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${QLITEVIEW_RUNTIME_DIR}/livicore.dll" "$<TARGET_FILE_DIR:qliteview>/livicore.dll"
+    VERBATIM
+)
+add_dependencies(qliteview qliteview_runtime)

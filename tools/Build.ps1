@@ -21,7 +21,7 @@ $port = "$PSScriptRoot/Build-WindowsPort.ps1"
 $tests = if ($SkipTests) { 'OFF' } else { 'ON' }
 $ErrorActionPreference = 'Continue'
 & cmake -S $project -B build/release -G Ninja '-DCMAKE_BUILD_TYPE=Release' '-DCMAKE_CXX_COMPILER=cl' `
-    "-DCMAKE_PREFIX_PATH=$QtDirectory" '-DQLITEVIEW_EMBED_RUNTIME=ON' "-DBUILD_TESTING=$tests"
+    "-DCMAKE_PREFIX_PATH=$QtDirectory" "-DBUILD_TESTING=$tests"
 if ($LASTEXITCODE) { throw 'Qt configuration failed.' }
 & cmake --build build/release --parallel $Jobs
 if ($LASTEXITCODE) { throw 'Qt build failed.' }
@@ -29,7 +29,6 @@ if ($LASTEXITCODE) { throw 'Qt build failed.' }
 if ($LASTEXITCODE) { throw 'QML compatibility check failed.' }
 if (!$SkipTests) {
     $env:PATH = "$QtDirectory/bin;$env:PATH"
-    $env:QWEBKIT_REQUIRE_EMBEDDED = '1'
     & ctest --test-dir build/release --output-on-failure
     if ($LASTEXITCODE) {
         Get-Content build/release/tests/smoke-result.txt
@@ -39,8 +38,9 @@ if (!$SkipTests) {
 $ErrorActionPreference = 'Stop'
 New-Item -ItemType Directory -Force -Path "$project/dist" | Out-Null
 Copy-Item -LiteralPath "$project/build/release/qml/QWebKit/qliteview.dll" -Destination "$project/dist/qliteview.dll" -Force
+Copy-Item -LiteralPath "$project/build/runtime/livicore.dll" -Destination "$project/dist/livicore.dll" -Force
 if (Test-Path -LiteralPath "$project/build/release/bin/qliteview_example.exe") {
     Copy-Item -LiteralPath "$project/build/release/bin/qliteview_example.exe" -Destination "$project/dist/qliteview_example.exe" -Force
     Copy-Item -LiteralPath "$PSScriptRoot/Run-Example.ps1" -Destination "$project/dist/Run-Example.ps1" -Force
 }
-Write-Output "Built $project/dist/qliteview.dll"
+Write-Output "Built $project/dist/qliteview.dll and livicore.dll"

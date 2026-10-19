@@ -14,8 +14,6 @@
 #include <QTcpSocket>
 #include <QFile>
 #include <QResource>
-#include <QStandardPaths>
-#include <QCryptographicHash>
 #include <QInputMethodEvent>
 #include <QProcess>
 #include <QProcessEnvironment>
@@ -36,17 +34,13 @@ void Smoke::initTestCase() {
         auto error=reinterpret_cast<const char*(*)()>(module.resolve("qwebkit_last_error"));
         QVERIFY2(initialize,qPrintable(module.errorString()));
         QVERIFY2(initialize(),error?error():"initialize failed");
-        if(qEnvironmentVariableIsSet("QWEBKIT_REQUIRE_EMBEDDED")) {
-            QFile manifest(":/qliteview/runtime/manifest.json");
-            QVERIFY2(manifest.open(QIODevice::ReadOnly),"This DLL does not embed its runtime");
-            auto hash=QCryptographicHash::hash(manifest.readAll(),QCryptographicHash::Sha256).toHex();
-            QString expected=QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
-                +"/QLiteView/"+QString::fromLatin1(hash)+"/livicore.dll";
-            wchar_t loaded[32768]{};
-            QVERIFY(GetModuleFileNameW(GetModuleHandleW(L"livicore.dll"),loaded,32768));
-            QCOMPARE(QDir::fromNativeSeparators(QString::fromWCharArray(loaded)).toLower(),expected.toLower());
-            qInfo().noquote()<<"Embedded LiteView loaded from"<<expected;
-        }
+        const QString expected = QCoreApplication::applicationDirPath() + "/livicore.dll";
+        wchar_t loaded[32768]{};
+        QVERIFY(GetModuleFileNameW(GetModuleHandleW(L"livicore.dll"), loaded, 32768));
+        QCOMPARE(QDir::fromNativeSeparators(QString::fromWCharArray(loaded)).toLower(),
+                 expected.toLower());
+        QVERIFY(!QFile::exists(":/qliteview/runtime/manifest.json"));
+        qInfo().noquote() << "LiteView loaded from application directory:" << expected;
         QQmlComponent component(&engine);
         component.setData(R"QML(
 import QtQuick
@@ -569,6 +563,18 @@ int main(int argc,char** argv)
 {
     QGuiApplication app(argc,argv);
     QCoreApplication::setApplicationName("qliteview-smoke");
+    if (app.arguments().contains(QStringLiteral("--check-runtime"))) {
+        SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
+        QLibrary module(QCoreApplication::applicationDirPath() + "/qliteview.dll");
+        module.setLoadHints(QLibrary::PreventUnloadHint);
+        auto initialize = reinterpret_cast<bool (*)()>(module.resolve("qwebkit_initialize"));
+        auto error = reinterpret_cast<const char *(*)()>(module.resolve("qwebkit_last_error"));
+        if (!initialize || !initialize()) {
+            qCritical().noquote() << (initialize && error ? error() : qPrintable(module.errorString()));
+            return 1;
+        }
+        return 0;
+    }
     Smoke test;
     return QTest::qExec(&test,argc,argv);
 }

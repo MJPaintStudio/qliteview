@@ -4,7 +4,7 @@
 
 ## 使用
 
-交付文件：`dist/qliteview.dll`，当前版本约 106.33 MiB。
+交付文件：`dist/qliteview.dll` 和 `dist/livicore.dll`，两个文件都放在宿主 EXE 的同一目录。
 
 宿主负责部署 Qt。在创建 `QGuiApplication` 后，于 GUI 线程加载 DLL 并初始化，然后创建 QML 引擎和页面：
 
@@ -22,7 +22,7 @@ if (!initialize || !initialize()) {
 
 原有 QML 继续使用 `import QWebKit`、`WebEngineView`、`WebEngineProfile` 等类型。更换宿主加载的 DLL 文件名即可保留这些接口声明；同一进程只初始化 qwebkit 或 qliteview 中的一个，避免重复注册 QML 类型。
 
-`qliteview.dll` 内嵌未压缩的 `livicore.dll`，由安装器统一压缩，避免资源预压缩降低 LZMA2 的压缩效果。这会增加 DLL 和安装后占用，但减少下载安装包大小。首次初始化时，按清单校验并释放到 Qt 的 `GenericCacheLocation/QLiteView/<manifest SHA256>/`，再加载内核。无需额外分发 LiteView 内核 DLL 或 ICU 数据文件。Qt、Qt Quick、Qt WebChannel 和 MSVC 运行库仍由宿主部署。
+`qliteview.dll` 是 Qt 适配层，`livicore.dll` 是独立的浏览器内核。初始化只从宿主 EXE 目录加载 `livicore.dll`，不释放文件到缓存，也不回退到旧缓存、开发机路径、当前工作目录或 PATH 中的内核。缺失或损坏时初始化失败，并返回包含实际路径的错误。两个 DLL 由安装器统一压缩、部署和更新，发布前分别签名；外层 DLL 的签名不能替代内核的签名。无需额外 ICU 数据文件，Qt、Qt Quick、Qt WebChannel 和 MSVC 运行库仍由宿主部署。
 
 ## 构建
 
@@ -36,7 +36,7 @@ if (!initialize || !initialize()) {
 ./tools/Build.ps1 -Jobs 6
 ```
 
-脚本依次构建内核依赖、内核、Qt DLL，核对接口并运行测试，成功后复制到 `dist/qliteview.dll`。默认 Qt 路径是 `D:/Qt/6.11.1/msvc2022_64`，可用 `-QtDirectory` 修改。LLVM 优先使用相邻 qwebkit 的工具目录，其次为 `C:/Program Files/LLVM/bin`。需要支持 `#embed` 的 clang-cl 23，以嵌入完整 ICU 71 数据。
+脚本依次构建内核依赖、内核、Qt DLL，核对接口并运行测试，成功后将两个 DLL 复制到 `dist/`。默认 Qt 路径是 `D:/Qt/6.11.1/msvc2022_64`，可用 `-QtDirectory` 修改。LLVM 优先使用相邻 qwebkit 的工具目录，其次为 `C:/Program Files/LLVM/bin`。需要支持 `#embed` 的 clang-cl 23，以嵌入完整 ICU 71 数据。
 
 仅增量链接内核和准备运行时：
 
@@ -59,11 +59,10 @@ python tools/check_qml_contract.py build/release/src/QWebKit/meta_types/qt6qlite
 
 ```powershell
 $env:PATH = "D:/Qt/6.11.1/msvc2022_64/bin;" + $env:PATH
-$env:QWEBKIT_REQUIRE_EMBEDDED = '1'
 ctest --test-dir build/release --output-on-failure
 ```
 
-测试报告：`build/release/tests/smoke-result.txt`。2026-10-12 完整验证结果为 **22 项通过、0 项失败、0 项跳过**，包括嵌入式内核加载、QML 页面、真实像素合成和透明背景、键盘与中文输入、JS 对象和数组、WebAssembly、Intl、Canvas、qrc/WebChannel、HTTP 和历史导航、gzip/deflate/Brotli 响应解压、iframe.srcdoc 沙箱、业务页面、Profile 隔离、LocalStorage/Cookie 跨进程持久化、加载失败回调、不受信任证书拒绝、HTTPS，以及加载期间销毁视图。
+测试报告：`build/release/tests/smoke-result.txt`。测试始终检查内核从 EXE 同目录加载，另外在隔离目录验证缺失、损坏内核不会回退到其他位置。功能覆盖 QML 页面、真实像素合成和透明背景、键盘与中文输入、JS 对象和数组、WebAssembly、Intl、Canvas、qrc/WebChannel、HTTP 和历史导航、gzip/deflate/Brotli 响应解压、iframe.srcdoc 沙箱、业务页面、Profile 隔离、LocalStorage/Cookie 跨进程持久化、加载失败回调、不受信任证书拒绝、HTTPS，以及加载期间销毁视图。
 
 不受信任证书测试使用 Python 在本机启动 HTTPS 服务，测试证书不会安装到系统信任库。公网 HTTPS 和实际业务页面通过环境变量指定：
 
